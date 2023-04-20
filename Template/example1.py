@@ -1,10 +1,5 @@
-import sys
-
 import pandas as pd
-
-locdir = '/Users/jacob/Documents/GitHub/KMMTransferRegressor/KMMTR'
-sys.path.append(locdir)
-import KMMTR
+from KMMTR import KMMTR
 
 # generate source domain data
 import numpy as np

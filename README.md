@@ -2,6 +2,9 @@
 
 # Python package - KMMTransferReg 
 
+A transfer learning regression model based on Kernel Mean Matching (KMM) algorithm
+
+
 Written using Python, which is suitable for operating systems, e.g., Windows/Linux/MAC OS etc.
 
 
