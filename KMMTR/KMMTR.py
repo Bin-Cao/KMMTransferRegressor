@@ -64,7 +64,7 @@ class KMMTransferReg():
         warnings.filterwarnings('ignore')
 
 
-    def fit(self,source_dataset,target_dataset,test_data):
+    def fit(self,source_dataset,target_dataset,test_data,tao=None):
         """
         Fit the transfer model on source and target datasets and return the predictions
         on the test data along with beta coefficients.
@@ -80,7 +80,9 @@ class KMMTransferReg():
         test_data : array-like of shape (n_samples, n_features - Targets)
             The test dataset, where n_samples is the number of samples and n_features
             is the number of features excluding the target variable(s).
-
+        tao : float, default=None
+            used in KMM : 1-tao <= sum(beta_i) <= 1+tao , E(beta) = 1 , E is expectation 
+            if tao == None, tao =  B/np.sqrt(n), n is the number of source domain data.
         Returns
         -------
         predictions : array-like of shape (n_samples,)
@@ -94,7 +96,7 @@ class KMMTransferReg():
         target_response = np.array(target_dataset)[:, -self.Targets:]
 
         KMM = KernelMeanMatching(self.kernel,source_data,target_data,target_response)
-        beta = KMM.cal_beta(B = self.UpBound)
+        beta = KMM.cal_beta(B = self.UpBound,tao=tao)
 
         X = np.concatenate((source_data, target_data), axis=0)
         Y = np.concatenate((source_response, target_response), axis=0)
@@ -111,9 +113,7 @@ class KMMTransferReg():
                         )))
 
 
-        return self.Regressor.fit(X,Y, sample_weight = data_weight.flatten()).predict(test_data), beta
-
-
+        return self.Regressor.fit(X,Y, sample_weight = data_weight.flatten()).predict(test_data), beta.flatten()
 
 
 def check_attributes(estimator, attribute_list):
