@@ -1,12 +1,8 @@
 🤝🤝🤝 Please star ⭐️ it for promoting open source projects 🌍 ! Thanks !
 
-Source code: [![](https://img.shields.io/badge/PyPI-caobin-blue)](https://pypi.org/project/KMMTR/)
-
 # Python package - KMMTransferReg 
 
 Written using Python, which is suitable for operating systems, e.g., Windows/Linux/MAC OS etc.
-
-![Screen Shot 2022-09-17 at 12 54 38](https://user-images.githubusercontent.com/86995074/190841124-bed27a60-4ec4-43c7-affd-37767408663b.png)
 
 
 ## Installing / 安装
