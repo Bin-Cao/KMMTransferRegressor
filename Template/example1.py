@@ -6,7 +6,7 @@ import numpy as np
 rng_S = np.random.RandomState(0)
 # 20 source domian data
 S_X = rng_S.uniform(-5, 5, 30)[:, np.newaxis]
-S_y = 2*S_X[:, 0] + 5 +  0.8*rng_S.normal(1, 2.5, S_X.shape[0])
+S_y = 1. *S_X[:, 0] + 4 +  1.5 *rng_S.normal(1, 2.5, S_X.shape[0])
 Sdataset = pd.DataFrame(S_X)
 Sdataset['y'] = S_y
 print(Sdataset.head())
@@ -16,7 +16,7 @@ print('#'*20)
 rng_T = np.random.RandomState(10)
 # 5 target domian data
 T_X = rng_T.uniform(3, 8, 10)[:, np.newaxis]
-T_y = 2*T_X[:, 0] + 5 +  0.8*rng_T.normal(1, 2.5, T_X.shape[0])
+T_y = 2*T_X[:, 0] + 5 +  1.2 *rng_T.normal(1, 2.5, T_X.shape[0])
 Tdataset = pd.DataFrame(T_X)
 Tdataset['y'] = T_y
 print(Tdataset.head())
