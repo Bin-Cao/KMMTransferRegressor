@@ -9,6 +9,7 @@ S_X = rng_S.uniform(-5, 5, 30)[:, np.newaxis]
 S_y = 1. *S_X[:, 0] + 4 +  1.5 *rng_S.normal(1, 2.5, S_X.shape[0])
 Sdataset = pd.DataFrame(S_X)
 Sdataset['y'] = S_y
+Sdataset.to_csv('Sourcetrain.csv')
 print(Sdataset.head())
 print('#'*20)
 
@@ -19,6 +20,7 @@ T_X = rng_T.uniform(3, 8, 10)[:, np.newaxis]
 T_y = 2*T_X[:, 0] + 5 +  1.2 *rng_T.normal(1, 2.5, T_X.shape[0])
 Tdataset = pd.DataFrame(T_X)
 Tdataset['y'] = T_y
+Tdataset.to_csv('Targettrain.csv')
 print(Tdataset.head())
 print('#'*20)
 
@@ -27,6 +29,9 @@ rng_Ts = np.random.RandomState(13)
 # 5 target domian data
 Ts_X = rng_Ts.uniform(3, 8, 5)[:, np.newaxis]
 Ts_y = 2*Ts_X[:, 0] + 5 +  .3 * rng_Ts.normal(1, 2.5, Ts_X.shape[0])
+Tsdataset = pd.DataFrame(Ts_X)
+Tsdataset['y'] = Ts_y
+Tsdataset.to_csv('Test.csv')
 print('#'*20)
 
 # plot the distribution of data
@@ -67,6 +72,8 @@ Reg = KMMTR.KMMTransferReg(Regressor='LR')
         on the test dataset.
 """
 prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=0.6)
+beta = pd.DataFrame(beta)
+beta.to_csv('beta.csv')
 print('#'*20)
 
 # plot the distribution of data with weights
