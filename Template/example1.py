@@ -5,8 +5,10 @@ from KMMTR import KMMTR
 import numpy as np
 rng_S = np.random.RandomState(0)
 # 20 source domian data
-S_X = rng_S.uniform(-5, 5, 30)[:, np.newaxis]
-S_y = 1. *S_X[:, 0] + 4 +  1.5 *rng_S.normal(1, 2.5, S_X.shape[0])
+# P_S(y|x) = P_T(y|x)
+# P_S(x) != P_T(x)
+S_X = rng_S.normal(-2.5, 5, 30)[:, np.newaxis]
+S_y = S_X[:, 0]**2 + 8 + rng_S.normal(0, 3, S_X.shape[0])
 Sdataset = pd.DataFrame(S_X)
 Sdataset['y'] = S_y
 Sdataset.to_csv('Sourcetrain.csv')
@@ -16,8 +18,8 @@ print('#'*20)
 # generate target domain data
 rng_T = np.random.RandomState(10)
 # 5 target domian data
-T_X = rng_T.uniform(3, 8, 10)[:, np.newaxis]
-T_y = 2*T_X[:, 0] + 5 +  1.2 *rng_T.normal(1, 2.5, T_X.shape[0])
+T_X = rng_T.normal(2.5, 5, 10)[:, np.newaxis]
+T_y = T_X[:, 0]**2 + 8 +  rng_T.normal(0, 3, T_X.shape[0])
 Tdataset = pd.DataFrame(T_X)
 Tdataset['y'] = T_y
 Tdataset.to_csv('Targettrain.csv')
@@ -27,8 +29,8 @@ print('#'*20)
 # generate test data
 rng_Ts = np.random.RandomState(13)
 # 5 target domian data
-Ts_X = rng_Ts.uniform(3, 8, 5)[:, np.newaxis]
-Ts_y = 2*Ts_X[:, 0] + 5 +  .3 * rng_Ts.normal(1, 2.5, Ts_X.shape[0])
+Ts_X = rng_Ts.normal(2.5, 5, 5)[:, np.newaxis]
+Ts_y = Ts_X[:, 0]**2 + 8  +  rng_Ts.normal(0, 3, Ts_X.shape[0])
 Tsdataset = pd.DataFrame(Ts_X)
 Tsdataset['y'] = Ts_y
 Tsdataset.to_csv('Test.csv')
@@ -39,6 +41,7 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
 ax.scatter(S_X,S_y, c='k', s=20, marker='x', label='Source Domain')
 ax.scatter(T_X,T_y, c='r', s=20, marker='x',label='Target Domain')
+ax.scatter(Ts_X,Ts_y, c='y', s=20, marker='o',label='Test Data')
 plt.legend(loc=1)
 ax.set_xlabel('x',fontsize=14)
 ax.set_ylabel('y', fontsize=14)
@@ -71,23 +74,59 @@ Reg = KMMTR.KMMTransferReg(Regressor='LR')
         Fit the transfer learning regression model to the source dataset and target dataset, and predict the target variable
         on the test dataset.
 """
-prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=0.6)
+tao=5
+prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=tao)
 beta = pd.DataFrame(beta)
 beta.to_csv('beta.csv')
 print('#'*20)
 
 # plot the distribution of data with weights
 import matplotlib.pyplot as plt
+from sklearn import linear_model
 fig, ax = plt.subplots()
+# plot scatters
 ax.scatter(S_X,S_y, c='k', marker='x',s=20, label='Source Domain')
 ax.scatter(S_X,S_y, c='cyan', s=40*beta, alpha = 0.5)
 ax.scatter(T_X,T_y, c='r', s=20, marker='x',label='Target Domain')
+ax.scatter(Ts_X,Ts_y, c='y', s=20, marker='o',label='Test Data')
+# show figure
 plt.legend(loc=1)
 ax.set_xlabel('x',fontsize=14)
 ax.set_ylabel('y', fontsize=14)
-plt.legend(fontsize = 14)
+plt.legend(fontsize = 12)
 plt.savefig('DataDis_weight.png',bbox_inches = 'tight',dpi=600)
 plt.savefig('DataDis_weight.svg',bbox_inches = 'tight',dpi=600)
+plt.show()
+
+
+
+# plot the distribution of data with weights
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+fig, ax = plt.subplots()
+# plot scatters
+ax.scatter(S_X,S_y, c='k', marker='x',s=20, label='Source Domain')
+ax.scatter(S_X,S_y, c='cyan', s=40*beta, alpha = 0.5)
+ax.scatter(T_X,T_y, c='r', s=20, marker='x',label='Target Domain')
+ax.scatter(Ts_X,Ts_y, c='y', s=20, marker='o',label='Test Data')
+
+# plot lines
+x_values = np.array([x for x in [Ts_X.min(), Ts_X.max()]]).reshape(-1,1)
+mdoel_1 = linear_model.LinearRegression()
+pre_without_transfer = mdoel_1.fit(T_X,T_y).predict(x_values,)
+plt.plot(x_values,pre_without_transfer,c='k',linestyle = '--',label='Without transfer')
+
+pre_with_transfer, beta  = Reg.fit(Sdataset,Tdataset,x_values,tao=tao)
+plt.plot(x_values,pre_with_transfer,c='k',linestyle = '-',label='With KMM transfer')
+
+# show figure
+plt.legend(loc=1)
+plt.xlim(Ts_X.min(), Ts_X.max())
+ax.set_xlabel('x',fontsize=14)
+ax.set_ylabel('y', fontsize=14)
+plt.legend(fontsize = 12)
+plt.savefig('Lines.png',bbox_inches = 'tight',dpi=600)
+plt.savefig('Lines.svg',bbox_inches = 'tight',dpi=600)
 plt.show()
 
 
