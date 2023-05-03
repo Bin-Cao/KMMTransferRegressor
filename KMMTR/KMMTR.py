@@ -139,7 +139,7 @@ def check_weight(estimator,):
 def GenerateReg(Regressor_name):
     if Regressor_name == 'RF':
         from sklearn.ensemble import RandomForestRegressor
-        mdoel = RandomForestRegressor
+        mdoel = RandomForestRegressor()
     elif Regressor_name == 'LR':
         from sklearn import linear_model
         mdoel = linear_model.LinearRegression()

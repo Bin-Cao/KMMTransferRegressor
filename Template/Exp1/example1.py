@@ -3,12 +3,12 @@ from KMMTR import KMMTR
 
 # generate source domain data
 import numpy as np
-rng_S = np.random.RandomState(0)
-# 20 source domian data
+rng_S = np.random.RandomState(1)
+# 30 source domian data
 # P_S(y|x) = P_T(y|x)
 # P_S(x) != P_T(x)
-S_X = rng_S.normal(-2.5, 5, 30)[:, np.newaxis]
-S_y = S_X[:, 0]**2 + 8 + rng_S.normal(0, 3, S_X.shape[0])
+S_X = rng_S.normal(1, 2, 30)[:, np.newaxis]
+S_y =  3*S_X[:, 0] + 5 + rng_S.normal(0, 3, S_X.shape[0])
 Sdataset = pd.DataFrame(S_X)
 Sdataset['y'] = S_y
 Sdataset.to_csv('Sourcetrain.csv')
@@ -16,10 +16,10 @@ print(Sdataset.head())
 print('#'*20)
 
 # generate target domain data
-rng_T = np.random.RandomState(10)
+rng_T = np.random.RandomState(2)
 # 5 target domian data
-T_X = rng_T.normal(2.5, 5, 10)[:, np.newaxis]
-T_y = T_X[:, 0]**2 + 8 +  rng_T.normal(0, 3, T_X.shape[0])
+T_X = rng_T.normal(4, 1, 10)[:, np.newaxis]
+T_y =  3*T_X[:, 0]+ 5 +  rng_T.normal(0, 3, T_X.shape[0])
 Tdataset = pd.DataFrame(T_X)
 Tdataset['y'] = T_y
 Tdataset.to_csv('Targettrain.csv')
@@ -27,10 +27,10 @@ print(Tdataset.head())
 print('#'*20)
 
 # generate test data
-rng_Ts = np.random.RandomState(13)
+rng_Ts = np.random.RandomState(3)
 # 5 target domian data
-Ts_X = rng_Ts.normal(2.5, 5, 5)[:, np.newaxis]
-Ts_y = Ts_X[:, 0]**2 + 8  +  rng_Ts.normal(0, 3, Ts_X.shape[0])
+Ts_X = rng_Ts.normal(4, 1, 5)[:, np.newaxis]
+Ts_y = 3*Ts_X[:, 0]+ 5  +  rng_Ts.normal(0, 3, Ts_X.shape[0])
 Tsdataset = pd.DataFrame(Ts_X)
 Tsdataset['y'] = Ts_y
 Tsdataset.to_csv('Test.csv')
@@ -74,7 +74,7 @@ Reg = KMMTR.KMMTransferReg(Regressor='LR')
         Fit the transfer learning regression model to the source dataset and target dataset, and predict the target variable
         on the test dataset.
 """
-tao=5
+tao=0.6
 prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=tao)
 beta = pd.DataFrame(beta)
 beta.to_csv('beta.csv')
@@ -129,7 +129,6 @@ plt.savefig('Lines.png',bbox_inches = 'tight',dpi=600)
 plt.savefig('Lines.svg',bbox_inches = 'tight',dpi=600)
 plt.show()
 
-
 # compare the final prediction result by LR
 from sklearn.metrics import r2_score
 from sklearn import linear_model
@@ -137,3 +136,57 @@ mdoel = linear_model.LinearRegression()
 pre = mdoel.fit(T_X,T_y).predict(Ts_X)
 print('Without Transfer',r2_score(Ts_y,pre))
 print('With Transfer',r2_score(Ts_y,prevalue))
+
+
+# scatter plot
+font2 = {'family' : 'Arial',
+'weight' : 'normal',
+'size'   : 23,
+}
+fig = plt.figure(figsize=[8,8])
+ax1 = plt.subplot()
+ax1.plot([Ts_y.min()-0.5, Ts_y.max()+0.5], [Ts_y.min()-0.5, Ts_y.max()+0.5],"k:", label="Perfect prediction")
+ax1.set_ylabel("predicted value ",font2)
+ax1.set_xlabel("True value",font2)
+#ax1.set_ylim([1, 8])
+#ax1.set_xlim([1, 8])
+plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}'.format(round(r2_score(Ts_y,prevalue),2)))
+ax1.grid() #显示网格作为背景，不是必须
+ax1.legend(fontsize=18)
+plt.tick_params(labelsize=18)
+plt.savefig('result_scatter_transfer.png',bbox_inches = 'tight',dpi=600)
+plt.savefig('result_scatter_transfer.svg',bbox_inches = 'tight',dpi=600)
+plt.show()
+
+
+fig = plt.figure(figsize=[8,8])
+ax1 = plt.subplot()
+ax1.plot([Ts_y.min()-0.5, Ts_y.max()+0.5], [Ts_y.min()-0.5, Ts_y.max()+0.5],"k:", label="Perfect prediction")
+ax1.set_ylabel("predicted value ",font2)
+ax1.set_xlabel("True value",font2)
+#ax1.set_ylim([1, 8])
+#ax1.set_xlim([1, 8])
+plt.scatter(Ts_y,pre,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}'.format(round(r2_score(Ts_y,pre),2)))
+ax1.grid() #显示网格作为背景，不是必须
+ax1.legend(fontsize=18)
+plt.tick_params(labelsize=18)
+plt.savefig('result_scatter_without_transfer.png',bbox_inches = 'tight',dpi=600)
+plt.savefig('result_scatter_without_transfer.svg',bbox_inches = 'tight',dpi=600)
+plt.show()
+
+
+fig = plt.figure(figsize=[8,8])
+ax1 = plt.subplot()
+ax1.plot([Ts_y.min()-0.5, Ts_y.max()+0.5], [Ts_y.min()-0.5, Ts_y.max()+0.5],"k:", label="Perfect prediction")
+ax1.set_ylabel("predicted value ",font2)
+ax1.set_xlabel("True value",font2)
+#ax1.set_ylim([1, 8])
+#ax1.set_xlim([1, 8])
+plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}, KMM Transfer'.format(round(r2_score(Ts_y,prevalue),2)))
+plt.scatter(Ts_y,pre,marker='o',c='r',s=120,edgecolors='k',alpha=0.8,label='R={}, without transfer'.format(round(r2_score(Ts_y,pre),2)))
+ax1.grid() #显示网格作为背景，不是必须
+ax1.legend(fontsize=18)
+plt.tick_params(labelsize=18)
+plt.savefig('result_scatter_Compare.png',bbox_inches = 'tight',dpi=600)
+plt.savefig('result_scatter_Compare.svg',bbox_inches = 'tight',dpi=600)
+plt.show()
