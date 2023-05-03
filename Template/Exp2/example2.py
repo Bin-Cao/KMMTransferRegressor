@@ -7,8 +7,8 @@ rng_S = np.random.RandomState(1)
 # 30 source domian data
 # P_S(y|x) = P_T(y|x)
 # P_S(x) != P_T(x)
-S_X = rng_S.normal(0, 1, 30)[:, np.newaxis]
-S_y =  3*(S_X[:, 0]-2)**2 + 5 + rng_S.normal(0, 3, S_X.shape[0])
+S_X = rng_S.normal(-3, 1, 30)[:, np.newaxis]
+S_y =  (S_X[:, 0])**2 + 5 + rng_S.normal(0, 2, S_X.shape[0])
 Sdataset = pd.DataFrame(S_X)
 Sdataset['y'] = S_y
 Sdataset.to_csv('Sourcetrain.csv')
@@ -18,8 +18,8 @@ print('#'*20)
 # generate target domain data
 rng_T = np.random.RandomState(2)
 # 5 target domian data
-T_X = rng_T.normal(4, 1, 10)[:, np.newaxis]
-T_y =  3*(T_X[:, 0]-2)**2+ 5 +  rng_T.normal(0, 3, T_X.shape[0])
+T_X = rng_T.normal(3, 1, 10)[:, np.newaxis]
+T_y =  (T_X[:, 0])**2+ 5 +  rng_T.normal(0, 2, T_X.shape[0])
 Tdataset = pd.DataFrame(T_X)
 Tdataset['y'] = T_y
 Tdataset.to_csv('Targettrain.csv')
@@ -27,10 +27,10 @@ print(Tdataset.head())
 print('#'*20)
 
 # generate test data
-rng_Ts = np.random.RandomState(3)
+rng_Ts = np.random.RandomState(420)
 # 5 target domian data
-Ts_X = rng_Ts.normal(4, 1, 5)[:, np.newaxis]
-Ts_y = 3*(Ts_X[:, 0]-2)**2+ 5  +  rng_Ts.normal(0, 3, Ts_X.shape[0])
+Ts_X = rng_Ts.normal(0, 1, 5)[:, np.newaxis]
+Ts_y = (Ts_X[:, 0])**2+ 5 #  +  rng_Ts.normal(0, 0.1, Ts_X.shape[0])
 Tsdataset = pd.DataFrame(Ts_X)
 Tsdataset['y'] = Ts_y
 Tsdataset.to_csv('Test.csv')
@@ -52,7 +52,7 @@ plt.show()
 
 # KMM regression
 from sklearn import svm
-regr = svm.SVR(kernel='rbf')
+regr = svm.SVR(kernel='poly',degree=2,)
 Reg = KMMTR.KMMTransferReg(Regressor=regr)
 """
     Parameters
@@ -76,7 +76,7 @@ Reg = KMMTR.KMMTransferReg(Regressor=regr)
         Fit the transfer learning regression model to the source dataset and target dataset, and predict the target variable
         on the test dataset.
 """
-tao=None
+tao=0.2
 prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=tao)
 beta = pd.DataFrame(beta)
 beta.to_csv('beta.csv')
@@ -112,7 +112,7 @@ ax.scatter(T_X,T_y, c='r', s=20, marker='x',label='Target Domain')
 ax.scatter(Ts_X,Ts_y, c='y', s=20, marker='o',label='Test Data')
 
 # plot lines
-x_values = np.array([x for x in [S_X.min(), T_X.max()]]).reshape(-1,1)
+x_values = np.array([x for x in np.linspace(S_X.min(), T_X.max(),100)]).reshape(-1,1)
 mdoel_1 = regr
 pre_without_transfer = mdoel_1.fit(T_X,T_y).predict(x_values,)
 plt.plot(x_values,pre_without_transfer,c='k',linestyle = '--',label='Without transfer')
@@ -150,7 +150,7 @@ ax1.set_ylabel("predicted value ",font2)
 ax1.set_xlabel("True value",font2)
 #ax1.set_ylim([1, 8])
 #ax1.set_xlim([1, 8])
-plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}'.format(round(r2_score(Ts_y,prevalue),2)))
+plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R2={}'.format(round(r2_score(Ts_y,prevalue),2)))
 ax1.grid() #显示网格作为背景，不是必须
 ax1.legend(fontsize=18)
 plt.tick_params(labelsize=18)
@@ -166,7 +166,7 @@ ax1.set_ylabel("predicted value ",font2)
 ax1.set_xlabel("True value",font2)
 #ax1.set_ylim([1, 8])
 #ax1.set_xlim([1, 8])
-plt.scatter(Ts_y,pre,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}'.format(round(r2_score(Ts_y,pre),2)))
+plt.scatter(Ts_y,pre,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R2={}'.format(round(r2_score(Ts_y,pre),2)))
 ax1.grid() #显示网格作为背景，不是必须
 ax1.legend(fontsize=18)
 plt.tick_params(labelsize=18)
@@ -182,8 +182,8 @@ ax1.set_ylabel("predicted value ",font2)
 ax1.set_xlabel("True value",font2)
 #ax1.set_ylim([1, 8])
 #ax1.set_xlim([1, 8])
-plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R={}, KMM Transfer'.format(round(r2_score(Ts_y,prevalue),2)))
-plt.scatter(Ts_y,pre,marker='o',c='r',s=120,edgecolors='k',alpha=0.8,label='R={}, without transfer'.format(round(r2_score(Ts_y,pre),2)))
+plt.scatter(Ts_y,prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R2={}, KMM Transfer'.format(round(r2_score(Ts_y,prevalue),2)))
+plt.scatter(Ts_y,pre,marker='o',c='r',s=120,edgecolors='k',alpha=0.8,label='R2={}, without transfer'.format(round(r2_score(Ts_y,pre),2)))
 ax1.grid() #显示网格作为背景，不是必须
 ax1.legend(fontsize=18)
 plt.tick_params(labelsize=18)
