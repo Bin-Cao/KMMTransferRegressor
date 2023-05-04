@@ -190,3 +190,23 @@ plt.tick_params(labelsize=18)
 plt.savefig('result_scatter_Compare.png',bbox_inches = 'tight',dpi=600)
 plt.savefig('result_scatter_Compare.svg',bbox_inches = 'tight',dpi=600)
 plt.show()
+
+# plot the results on training data
+
+Train_prevalue, _  = Reg.fit(Sdataset,Tdataset,T_X,tao=0.4)
+Train_pre =  mdoel.fit(T_X,T_y).predict(T_X)
+fig = plt.figure(figsize=[8,8])
+ax1 = plt.subplot()
+ax1.plot([T_y.min()-0.5, T_y.max()+0.5], [T_y.min()-0.5, T_y.max()+0.5],"k:", label="Perfect prediction")
+ax1.set_ylabel("predicted value ",font2)
+ax1.set_xlabel("True value",font2)
+#ax1.set_ylim([1, 8])
+#ax1.set_xlim([1, 8])
+plt.scatter(T_y,Train_prevalue,marker='o',c='b',s=120,edgecolors='k',alpha=0.8,label='R2={}, KMM Transfer'.format(round(r2_score(T_y,Train_prevalue),2)))
+plt.scatter(T_y,Train_pre,marker='o',c='r',s=120,edgecolors='k',alpha=0.8,label='R2={}, without transfer'.format(round(r2_score(T_y,Train_pre),2)))
+ax1.grid() #显示网格作为背景，不是必须
+ax1.legend(fontsize=18)
+plt.tick_params(labelsize=18)
+plt.savefig('train_result_scatter_Compare.png',bbox_inches = 'tight',dpi=600)
+plt.savefig('train_result_scatter_Compare.svg',bbox_inches = 'tight',dpi=600)
+plt.show()
