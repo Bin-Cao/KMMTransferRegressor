@@ -1,6 +1,6 @@
 import numpy as np
 import warnings
-from KMM import KernelMeanMatching
+from .KMM import KernelMeanMatching
 
 
 class KMMTransferReg():

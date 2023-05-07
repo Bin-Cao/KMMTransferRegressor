@@ -6,6 +6,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel, RBF, Matern 
 
 
+
 class KernelMeanMatching():
     def __init__(self,kernel,source_data,target_data,target_response):
         """
@@ -73,9 +74,14 @@ class KernelMeanMatching():
         Xtrain = np.array(self.target_data)
         Ytrain = np.array(self.target_response)
         ker = self.call_kernel()
-        GPr = GPR(kernel=ker).fit(Xtrain,Ytrain)
-        print('Trained Kernel Function :', GPr.kernel_)
-        para = np.exp(GPr.kernel_.theta)
+        noise_ker = WhiteKernel(noise_level_bounds=(0.01,100))
+        # cal the data nosie by maximazing the likelihood 
+        GPr = GPR(kernel=ker+noise_ker).fit(Xtrain,Ytrain)
+        noise_level = np.exp(GPr.kernel_.theta[1])
+
+        GPr_fit = GPR(kernel=ker, alpha = noise_level).fit(Xtrain,Ytrain)
+        print('Trained Kernel Function :', GPr_fit.kernel_)
+        para = np.exp(GPr_fit.kernel_.theta)
 
         Inst_kernel = self.call_kernel(para)
         return Inst_kernel
