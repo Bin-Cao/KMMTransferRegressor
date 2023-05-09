@@ -19,7 +19,7 @@ Written using Python, which is suitable for operating systems, e.g., Windows/Lin
 
 ## Template / 模版
 
-[Click Here](https://github.com/Bin-Cao/KMMTransferRegressor/blob/main/Template/example1.py)
+[Click Here](https://github.com/Bin-Cao/KMMTransferRegressor/tree/main/Template)
 
 ## References / 参考文献
 Huang, J., Gretton, A., Borgwardt, K., Schölkopf, B., & Smola, A. (2006). Correcting sample selection bias by unlabeled data. Advances in neural information processing systems, 19.
