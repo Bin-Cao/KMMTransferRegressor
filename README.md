@@ -32,4 +32,4 @@ Maintained by Bin Cao. Please feel free to open issues in the Github or contact 
 
 中文算法介绍：
 
-![qrcode_for_gh_96b65db74f70_258](https://user-images.githubusercontent.com/86995074/233318908-bd01a187-3966-4d64-b8b0-8bb59f94a14a.jpg)
+![qrcode_for_gh_96b65db74f70_258](https://github.com/Bin-Cao/KMMTransferRegressor/tree/main/Template)
