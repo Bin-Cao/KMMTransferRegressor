@@ -112,7 +112,6 @@ class KMMTransferReg():
                 (len(target_data),1)
                         )))
 
-
         return self.Regressor.fit(X,Y, sample_weight = data_weight.flatten()).predict(test_data), beta.flatten()
 
 

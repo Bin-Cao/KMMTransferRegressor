@@ -81,6 +81,7 @@ prevalue, beta  = Reg.fit(Sdataset,Tdataset,Ts_X,tao=tao)
 beta = pd.DataFrame(beta)
 beta.to_csv('beta.csv')
 print('#'*20)
+print(round(beta,2))
 
 # plot the distribution of data with weights
 import matplotlib.pyplot as plt

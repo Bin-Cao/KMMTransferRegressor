@@ -74,12 +74,13 @@ class KernelMeanMatching():
         Xtrain = np.array(self.target_data)
         Ytrain = np.array(self.target_response)
         ker = self.call_kernel()
-        noise_ker = WhiteKernel(noise_level_bounds=(0.01,100))
+        noise_ker = WhiteKernel(noise_level_bounds=(0.01,0.5))
         # cal the data nosie by maximazing the likelihood 
-        GPr = GPR(kernel=ker+noise_ker).fit(Xtrain,Ytrain)
+        GPr = GPR(kernel=ker+noise_ker,normalize_y=True).fit(Xtrain,Ytrain)
         noise_level = np.exp(GPr.kernel_.theta[1])
+        print('Trained noise is %f' % noise_level)
 
-        GPr_fit = GPR(kernel=ker, alpha = noise_level).fit(Xtrain,Ytrain)
+        GPr_fit = GPR(kernel=ker, alpha = noise_level,normalize_y=True).fit(Xtrain,Ytrain)
         print('Trained Kernel Function :', GPr_fit.kernel_)
         para = np.exp(GPr_fit.kernel_.theta)
 
@@ -160,11 +161,9 @@ class KernelMeanMatching():
         V_h1_U = copy.deepcopy(matrix(V_h1))
         V_h2_U = copy.deepcopy(matrix(V_h2))
         M_G = matrix(np.r_[M_G1_U, M_G2_U,M_A1,M_A2])
-        h1 = matrix(1+tao)
-        h2 = matrix(tao-1)
+        h1 = matrix(0.99+tao)
+        h2 = matrix(tao-0.99)
         h = matrix(np.r_[V_h1_U, V_h2_U,h1,h2])
-
-        
 
         solvers.options['show_progress'] = True
         sol = solvers.qp(M_P,V_q,M_G,h)
