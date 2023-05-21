@@ -36,7 +36,7 @@ class KMMTransferReg():
         Fit the transfer learning regression model to the source dataset and target dataset, and predict the target variable
         on the test dataset.
     """
-    def __init__(self, Regressor='RF',UpBound=1,kernel = 'RBF', Targets = 1):
+    def __init__(self, Regressor='RF',UpBound=1,kernel = 'RBF', S_expt=.5,Targets = 1):
         """
         Initialize KMMTransferReg model.
 
@@ -50,6 +50,8 @@ class KMMTransferReg():
             The upper bound for beta coefficients. 
         kernel : str, default='RBF'
             The kernel to use for KMM. Can be 'RBF', 'DotProduct', 'WhiteKernel', 'Matern'.
+        S_expt : float, default=0.5 
+            the expected weights of source domain data
         Targets : int, default=1
             The number of target variables in the dataset.
         """
@@ -60,6 +62,7 @@ class KMMTransferReg():
             self.Regressor = Regressor
         self.UpBound = UpBound
         self.kernel = kernel
+        self.S_expt = S_expt
         self.Targets = Targets
         warnings.filterwarnings('ignore')
 
@@ -96,7 +99,7 @@ class KMMTransferReg():
         target_response = np.array(target_dataset)[:, -self.Targets:]
 
         KMM = KernelMeanMatching(self.kernel,source_data,target_data,target_response)
-        beta = KMM.cal_beta(B = self.UpBound,tao=tao)
+        beta = KMM.cal_beta(B = self.UpBound,S_expt=self.S_expt,tao=tao)
 
         X = np.concatenate((source_data, target_data), axis=0)
         Y = np.concatenate((source_response, target_response), axis=0)
