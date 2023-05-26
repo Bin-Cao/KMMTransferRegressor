@@ -73,7 +73,7 @@ class KernelMeanMatching():
         Xtrain = np.array(self.target_data)
         Ytrain = np.array(self.target_response)
         ker = self.call_kernel()
-        noise_ker = WhiteKernel(noise_level_bounds=(0.001,0.5))
+        noise_ker = WhiteKernel(noise_level_bounds=(0.001,0.1))
         # cal the data nosie by maximazing the likelihood 
         GPr = GPR(kernel=ker+noise_ker,normalize_y=True).fit(Xtrain,Ytrain)
         noise_level = np.exp(GPr.kernel_.theta[1])
