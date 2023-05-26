@@ -30,6 +30,6 @@ Maintained by Bin Cao. Please feel free to open issues in the Github or contact 
 
 ---
 
-算法介绍：
+算法的介绍：
 
 ![qrcode_for_gh_96b65db74f70_258](https://github.com/Bin-Cao/KMMTransferRegressor/tree/main/Template)
