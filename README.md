@@ -28,11 +28,6 @@ Huang, J., Gretton, A., Borgwardt, K., Schölkopf, B., & Smola, A. (2006). Corre
 Maintained by Bin Cao. Please feel free to open issues in the Github or contact Bin Cao
 (bcao@shu.edu.cn) in case of any problems/comments/suggestions in using the code. 
 
----
-
-算法的介绍：
-
-![qrcode_for_gh_96b65db74f70_258](https://github.com/Bin-Cao/KMMTransferRegressor/tree/main/Template)
 
 
 ---
