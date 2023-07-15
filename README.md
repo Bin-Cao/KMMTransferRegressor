@@ -33,3 +33,40 @@ Maintained by Bin Cao. Please feel free to open issues in the Github or contact 
 算法的介绍：
 
 ![qrcode_for_gh_96b65db74f70_258](https://github.com/Bin-Cao/KMMTransferRegressor/tree/main/Template)
+
+
+
+---
+## Transfer learning links
+1 : Instance-based transfer learning
+  - Instance selection (marginal distributions are same while conditional distributions are different) :
+    
+    [TrAdaboost](https://github.com/Bin-Cao/TrAdaboost/tree/main/TrAdaBoost)
+
+  - Instance re-weighting (conditional distributions are same while marginal distributions are different) :
+    
+    [KMM](https://github.com/Bin-Cao/KMMTransferRegressor)
+ 
+2 : Feature-based transfer learning
+  - Explicit distance:
+      - case 1 : marginal distributions are same while conditional distributions are different:
+        
+         [TCA(MMD based)](https://github.com/MaterialsInformaticsDemo/TCA)  ; [DAN(MK-MMD based)](https://github.com/MaterialsInformaticsDemo/DAN)
+      - case 1 : conditional distributions are same while marginal distributions are different
+      
+        JDA
+      
+      - case 3 : Both marginal distributions and conditional distributions are different
+      
+        DDA
+      
+ - Implicit distance :
+ 
+   DANN
+
+ 3 : Parameter-based transfer learning
+ 
+ - Pretraining + fine tune
+
+---
+
